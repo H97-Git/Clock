@@ -30,11 +30,11 @@ function createWindow() {
   win.loadFile('views/index.html');
 
   // Uncomment to toggle the dev tools
-  win.webContents.toggleDevTools();
+  // win.webContents.toggleDevTools();
 
   // Path for the icon
   let iconPath = path.join(__dirname, '../img/windows-icon-32.png')
-  let tray = new Tray(iconPath);
+  tray = new Tray(iconPath);
 
   //Context menu for the tray icon
   const contextMenu = Menu.buildFromTemplate([{
