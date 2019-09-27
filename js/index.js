@@ -22,7 +22,8 @@ function createWindow() {
     transparent: true,
     skipTaskbar: true,
     webPreferences: {
-      nodeIntegration: true
+      nodeIntegration: true,
+      devTools: false
     }
   });
 
