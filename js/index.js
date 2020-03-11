@@ -1,15 +1,29 @@
-const { app, BrowserWindow, Menu, ipcMain, Tray, electron } = require('electron');
-var AutoLaunch = require('auto-launch');
-var path = require('path');
+const {
+  app,
+  BrowserWindow,
+  Menu,
+  ipcMain,
+  Tray,
+  electron
+} = require('electron');
+const AutoLaunch = require('auto-launch');
+const path = require('path');
 const settings = require('electron-settings');
+const fs = require('fs');
+var pathExist = fs.existsSync(settings.file());
 
 // Start on startup
 var myAutoLauncher = new AutoLaunch({
   name: 'Clock',
 });
+var isChecked;
 
-// Get the boolean value of startup
-var isChecked = settings.get('isChecked');
+if (pathExist) {
+  // Get the boolean value of startup
+  isChecked = settings.get('isChecked') ? settings.get('isChecked') : false;
+} else {
+  isChecked = false;
+}
 
 // Create the window
 function createWindow() {
@@ -31,10 +45,12 @@ function createWindow() {
   win.loadFile('views/index.html');
 
   // Uncomment to toggle the dev tools
-  // win.webContents.toggleDevTools();
+  // win.webContents.openDevTools({
+  //   mode: 'detach'
+  // })
 
   // Path for the icon
-  let iconPath = path.join(__dirname, '../img/windows-icon-32.png')
+  let iconPath = path.join(__dirname, '../img/clock.png')
   tray = new Tray(iconPath);
 
   //Context menu for the tray icon
@@ -54,13 +70,21 @@ function createWindow() {
         }
       }
     },
-    { label: 'Item2', type: 'separator' },
+    {
+      label: 'Item2',
+      type: 'separator'
+    },
     {
       label: '12H/24H',
       type: 'normal',
-      click: () => { win.webContents.send('AMPM'); }
+      click: () => {
+        win.webContents.send('AMPM');
+      }
     },
-    { label: 'Item4', type: 'separator' },
+    {
+      label: 'Item4',
+      type: 'separator'
+    },
     {
       label: 'Close',
       type: 'normal',
@@ -73,8 +97,12 @@ function createWindow() {
   ]);
   tray.setContextMenu(contextMenu);
 
-  // Set the position from electron-settings
-  win.setPosition(settings.get('Positions.X'), settings.get('Positions.Y'))
+  if (pathExist) {
+    if (settings.get('Positions.X')) {
+      // Set the position from electron-settings
+      win.setPosition(settings.get('Positions.X'), settings.get('Positions.Y'))
+    }
+  }
 
   // Win.show when document.ready
   ipcMain.on('ready', (event) => {
