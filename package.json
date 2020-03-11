@@ -15,6 +15,9 @@
     "win": {
       "target": "msi",
       "icon": "assets/build/win/icon.ico"
+    },
+    "mac": {
+      "category": "your.app.category.type"
     }
   },
   "dependencies": {

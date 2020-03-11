@@ -24,7 +24,7 @@ $(function () {
 
   // Cache some selectors
   let clock = $('#clock'),
-  ampm = clock.find('.ampm');
+    ampm = clock.find('.ampm');
 
   // Map digits to their names (this will be an array)
   let digit_to_name = 'zero one two three four five six seven eight nine'.split(' ');
