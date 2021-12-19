@@ -450,3 +450,10 @@ aside {
 	font-size: 12px;
 	display: none;
 }
+
+.date-text {
+	position: absolute;
+	right: 40px;
+	font-size: 30px;
+	font-family: 'Nanum Pen Script';
+}

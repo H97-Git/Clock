@@ -4,23 +4,23 @@ const {
   Menu,
   ipcMain,
   Tray,
-  electron
-} = require('electron');
-const AutoLaunch = require('auto-launch');
-const path = require('path');
-const settings = require('electron-settings');
-const fs = require('fs');
+  electron,
+} = require("electron");
+const AutoLaunch = require("auto-launch");
+const path = require("path");
+const settings = require("electron-settings");
+const fs = require("fs");
 var pathExist = fs.existsSync(settings.file());
 
 // Start on startup
 var myAutoLauncher = new AutoLaunch({
-  name: 'Clock',
+  name: "Clock",
 });
 var isChecked;
 
 if (pathExist) {
   // Get the boolean value of startup
-  isChecked = settings.get('isChecked') ? settings.get('isChecked') : false;
+  isChecked = settings.get("isChecked") ? settings.get("isChecked") : false;
 } else {
   isChecked = false;
 }
@@ -37,12 +37,12 @@ function createWindow() {
     skipTaskbar: true,
     webPreferences: {
       nodeIntegration: true,
-      devTools: false
-    }
+      devTools: true,
+    },
   });
 
   // load the index.html of the app
-  win.loadFile('views/index.html');
+  win.loadFile("views/index.html");
 
   // Uncomment to toggle the dev tools
   // win.webContents.openDevTools({
@@ -50,95 +50,95 @@ function createWindow() {
   // })
 
   // Path for the icon
-  let iconPath = path.join(__dirname, '../img/clock.png')
+  let iconPath = path.join(__dirname, "../img/clock.png");
   tray = new Tray(iconPath);
 
   //Context menu for the tray icon
-  const contextMenu = Menu.buildFromTemplate([{
-      label: 'Start with Windows',
-      type: 'checkbox',
+  const contextMenu = Menu.buildFromTemplate([
+    {
+      label: "Start with Windows",
+      type: "checkbox",
       checked: isChecked,
       click: () => {
         if (!isChecked) {
           myAutoLauncher.enable();
-          settings.set('isChecked', true);
-          isChecked = settings.get('isChecked');
+          settings.set("isChecked", true);
+          isChecked = settings.get("isChecked");
         } else {
           myAutoLauncher.disable();
-          settings.set('isChecked', false);
-          isChecked = settings.get('isChecked');
+          settings.set("isChecked", false);
+          isChecked = settings.get("isChecked");
         }
-      }
+      },
     },
     {
-      label: 'Item2',
-      type: 'separator'
+      label: "Item2",
+      type: "separator",
     },
     {
-      label: '12H/24H',
-      type: 'normal',
+      label: "12H/24H",
+      type: "normal",
       click: () => {
-        win.webContents.send('AMPM');
-      }
+        win.webContents.send("AMPM");
+      },
     },
     {
-      label: 'Item4',
-      type: 'separator'
+      label: "Item4",
+      type: "separator",
     },
     {
-      label: 'Close',
-      type: 'normal',
+      label: "Close",
+      type: "normal",
       click: () => {
         win = null;
         app.quit();
-
-      }
-    }
+      },
+    },
   ]);
   tray.setContextMenu(contextMenu);
 
   if (pathExist) {
-    if (settings.get('Positions.X')) {
+    if (settings.get("Positions.X")) {
       // Set the position from electron-settings
-      win.setPosition(settings.get('Positions.X'), settings.get('Positions.Y'))
+      win.setPosition(settings.get("Positions.X"), settings.get("Positions.Y"));
     }
   }
 
   // Win.show when document.ready
-  ipcMain.on('ready', (event) => {
+  ipcMain.on("ready", (event) => {
     win.show();
   });
 
   // Save the position when moved
-  win.on('move', () => {
+  win.on("move", () => {
     // Set a var with the actual position
     var _Positions = win.getPosition();
     // Set the settings with the var
-    settings.set('Positions', {
+    settings.set("Positions", {
       X: _Positions[0],
-      Y: _Positions[1]
+      Y: _Positions[1],
     });
-  })
-
-  win.on('closed', () => {
-    win = null
   });
-};
+
+  win.on("closed", () => {
+    win = null;
+  });
+}
 // Prevent multi Instance
 app.requestSingleInstanceLock();
 
-app.on('ready', () => {
+app.on("ready", () => {
   createWindow();
 });
 
-app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
+app.on("window-all-closed", () => {
+  if (process.platform !== "darwin") {
     app.quit();
-  };
+  }
 });
 
-app.on('activate', () => {
+app.on("activate", () => {
   if (win === null) {
     createWindow();
-  };
+  }
 });
